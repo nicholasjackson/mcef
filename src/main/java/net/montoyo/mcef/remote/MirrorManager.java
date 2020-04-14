@@ -8,17 +8,18 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * MirrorManager keeps track of valid & broken mirrors that should be used to download MCEF resources.
- * It also makes sure only HTTPS mirrors are used, depending on the user's choices.
+ * MirrorManager keeps track of valid & broken mirrors that should be used to
+ * download MCEF resources. It also makes sure only HTTPS mirrors are used,
+ * depending on the user's choices.
  *
  * @author montoyo
  */
 public class MirrorManager {
 
     private static final Mirror[] defaultMirrors = new Mirror[] {
-            new Mirror("montoyo.net (over HTTPS)", "https://montoyo.net/jcef", Mirror.FLAG_SECURE | Mirror.FLAG_LETSENCRYPT),
-            new Mirror("montoyo.net (non-secure)", "http://montoyo.net/jcef", 0)
-    };
+            new Mirror("montoyo.net (over HTTPS)", "https://montoyo.net/jcef",
+                    Mirror.FLAG_SECURE | Mirror.FLAG_LETSENCRYPT),
+            new Mirror("montoyo.net (non-secure)", "http://montoyo.net/jcef", 0) };
 
     /**
      * The unique instance of the MirrorManager
@@ -35,28 +36,28 @@ public class MirrorManager {
 
     private void reset() {
         mirrors.clear();
-
-        if(MCEF.FORCE_MIRROR != null)
+        MCEF.FORCE_MIRROR = "http://localhost:8080";
+        if (MCEF.FORCE_MIRROR != null)
             mirrors.add(new Mirror("user-forced", MCEF.FORCE_MIRROR, Mirror.FLAG_FORCED));
         else {
             ArrayList<Mirror> lst = new ArrayList<>(Arrays.asList(defaultMirrors));
 
-            //Begin by adding all HTTPS mirrors in a random fashion
-            while(!lst.isEmpty()) {
+            // Begin by adding all HTTPS mirrors in a random fashion
+            while (!lst.isEmpty()) {
                 Mirror m = lst.remove(r.nextInt(lst.size()));
 
-                if(m.isSecure())
+                if (m.isSecure())
                     mirrors.add(m);
             }
 
-            if(!MCEF.SECURE_MIRRORS_ONLY) {
+            if (!MCEF.SECURE_MIRRORS_ONLY) {
                 lst.addAll(Arrays.asList(defaultMirrors));
 
-                //Then add all non-secure mirrors, if user didn't disable them
-                while(!lst.isEmpty()) {
+                // Then add all non-secure mirrors, if user didn't disable them
+                while (!lst.isEmpty()) {
                     Mirror m = lst.remove(r.nextInt(lst.size()));
 
-                    if(!m.isSecure())
+                    if (!m.isSecure())
                         mirrors.add(m);
                 }
             }
@@ -78,7 +79,7 @@ public class MirrorManager {
     public boolean markCurrentMirrorAsBroken() {
         boolean ret = true;
 
-        if(mirrors.isEmpty()) {
+        if (mirrors.isEmpty()) {
             reset();
             ret = false;
         }
