@@ -410,8 +410,8 @@ public class CefApp extends CefAppHandlerAdapter {
 
                     // Avoid to override user values by testing on NULL
                     if (OS.isMacintosh()) {
-                        String basePath = "/Library/Java/Extensions/jcef_app.app";
-                        settings.log_severity = LogSeverity.LOGSEVERITY_VERBOSE;
+                        String basePath = Paths.get(library_path).getParent().getParent().toString();
+                        // settings.log_severity = LogSeverity.LOGSEVERITY_VERBOSE;
                         settings.main_bundle_path = basePath;
                         settings.framework_dir_path = basePath
                                 + "/Contents/Frameworks/Chromium Embedded Framework.framework";

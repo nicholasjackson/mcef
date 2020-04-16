@@ -52,7 +52,7 @@ task apiJar(type: Jar) {
     classifier = 'api'
 	
 	manifest {
-        attributes 'FMLCorePlugin': 'net.montoyo.mcef.coremod.ShutdownPatcher'
+        //attributes 'FMLCorePlugin': 'net.montoyo.mcef.coremod.ShutdownPatcher'
         attributes 'FMLCorePluginContainsMod': 'true'
     }
 }
@@ -66,7 +66,7 @@ task coremodJar(type: Jar) {
     }
 
     manifest {
-        attributes 'FMLCorePlugin': 'net.montoyo.mcef.coremod.ShutdownPatcher'
+        //attributes 'FMLCorePlugin': 'net.montoyo.mcef.coremod.ShutdownPatcher'
     }
 
     classifier = 'coremod'

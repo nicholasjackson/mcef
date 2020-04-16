@@ -94,46 +94,42 @@ public class ClientProxy extends BaseProxy {
         if (ROOT.endsWith("/"))
             ROOT = ROOT.substring(0, ROOT.length() - 1);
 
-        File fileListing = new File(new File(ROOT), "config");
-
-        IProgressListener ipl;
-        RemoteConfig cfg = new RemoteConfig();
-        if (MCEF.USE_FORGE_SPLASH && enableForgeSplash)
-            ipl = new ForgeProgressListener();
-        else
-            ipl = new UpdateFrame();
-
-        cfg.load();
-        File[] resourceArray = cfg.getResourceArray();
-
-        if (!cfg.updateFileListing(fileListing, false))
-            Log.warning("There was a problem while establishing file list. Uninstall may not delete all files.");
-
-        if (!cfg.downloadMissing(ipl)) {
-            Log.warning("Going in virtual mode; couldn't download resources.");
-            VIRTUAL = true;
-            return;
-        }
-
-        if (!cfg.updateFileListing(fileListing, true))
-            Log.warning("There was a problem while updating file list. Uninstall may not delete all files.");
-
-        updateStr = cfg.getUpdateString();
-        ipl.onProgressEnd();
-
-        if (VIRTUAL)
-            return;
-
-        // if mac we need to add the Java files in the bundle to the classpath
-        if (OS.isMacintosh()) {
-
-        }
+        /*
+         * File fileListing = new File(new File(ROOT), "config");
+         * 
+         * IProgressListener ipl; RemoteConfig cfg = new RemoteConfig(); if
+         * (MCEF.USE_FORGE_SPLASH && enableForgeSplash) ipl = new
+         * ForgeProgressListener(); else ipl = new UpdateFrame();
+         * 
+         * cfg.load(); File[] resourceArray = cfg.getResourceArray();
+         * 
+         * if (!cfg.updateFileListing(fileListing, false)) Log.
+         * warning("There was a problem while establishing file list. Uninstall may not delete all files."
+         * );
+         * 
+         * if (!cfg.downloadMissing(ipl)) {
+         * Log.warning("Going in virtual mode; couldn't download resources."); VIRTUAL =
+         * true; return; }
+         * 
+         * if (!cfg.updateFileListing(fileListing, true)) Log.
+         * warning("There was a problem while updating file list. Uninstall may not delete all files."
+         * );
+         * 
+         * updateStr = cfg.getUpdateString(); ipl.onProgressEnd();
+         * 
+         * if (VIRTUAL) return;
+         * 
+         * // if mac we need to add the Java files in the bundle to the classpath if
+         * (OS.isMacintosh()) {
+         * 
+         * }
+         */
 
         try {
             Log.info("Now adding \"%s\" to java.library.path", ROOT);
             addToClassPath(ROOT);
 
-            String bundlePath = "/Library/Java/Extensions/jcef_app.app/Contents/Java";
+            String bundlePath = ROOT + "/jcef_app.app/Contents/Java";
             Log.info("Now adding \"%s\" to java.library.path", bundlePath);
             addToClassPath(bundlePath);
 
@@ -141,7 +137,8 @@ public class ClientProxy extends BaseProxy {
             pathsField.setAccessible(true);
 
             String[] paths = (String[]) pathsField.get(null);
-            Log.info("New java.library.path %s", paths);
+
+            Log.info("New java.library.path %s", paths.toString());
         } catch (Exception e) {
             Log.error("Failed to do it! Entering virtual mode...");
             e.printStackTrace();
@@ -283,11 +280,10 @@ public class ClientProxy extends BaseProxy {
             }
         });
 
-        /*
-         * if (!ShutdownPatcher.didPatchSucceed()) { Log.
-         * warning("ShutdownPatcher failed to patch Minecraft.run() method; starting ShutdownThread..."
-         * ); (new ShutdownThread()).start(); }
-         */
+        if (!ShutdownPatcher.didPatchSucceed()) {
+            Log.warning("ShutdownPatcher failed to patch Minecraft.run() method; starting ShutdownThread...");
+            (new ShutdownThread()).start();
+        }
 
         MinecraftForge.EVENT_BUS.register(this);
         if (MCEF.ENABLE_EXAMPLE)
